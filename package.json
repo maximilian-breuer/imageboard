@@ -1,0 +1,18 @@
+{
+  "name": "imagboard",
+  "version": "1.0.0",
+  "description": "WebTech Project group 5",
+  "main": "backend/src/server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ng:build": "cd angular-client && ng build",
+    "build": "npm run ng:build && cd backend && npm run build",
+    "start": "npm run ng:build && cd backend && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.rwth-aachen.de:learntech-lufgi9/webtech-21-22/gruppe-05.git"
+  },
+  "author": "group 5",
+  "license": "ISC"
+}
