@@ -1,0 +1,35 @@
+<nav class="navbar sticky-top navbar-dark" style="background-color: #00549f;">
+  <div class="container-fluid">
+    <div class="input-group">
+      <input id="tagFilterFieldControl" type="text" [formControl]="tagFilterFieldControl" class="form-control" placeholder="Tags" aria-label="Tags" aria-describedby="button-addon2">
+      <button (click)="applyFilter()" class="btn btn-secondary" type="button" id="button-addon2">Filter</button>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row row-cols-2 row-cols-sm-4 row-cols-lg-6" data-masonry='{"percentPosition": true }'>
+    <div class="col mb-4 btn" *ngFor="let image of images">
+      <div data-bs-toggle="modal" [attr.data-bs-target]="'#Modal'+image._id" data-id={{image._id}}>
+        <img src="{{image.source}}" class="img-fluid img-thumbnail">
+        <div class="modal fade" id="Modal{{image._id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{image._id}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <img src="{{image.source}}" style="width:100%; max-height=80%">
+              </div>
+              <div class="modal-footer">
+                <div class="container-fluid" *ngFor="let tag of image.tags">
+                  <p>{{tag}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
