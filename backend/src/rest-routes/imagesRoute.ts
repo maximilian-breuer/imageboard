@@ -18,7 +18,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
     // reconstruct array from params string
     const query = JSON.parse(req.query.tags as string) as Tags;
 
-    req.services.images.listAllByQuery(query, (array: Images) => {
+    req.services.images.listAllByQuery(query, (array) => {
       res.json(array);
     });
   } catch (e) {

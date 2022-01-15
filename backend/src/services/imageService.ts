@@ -22,7 +22,7 @@ export default function imagesService(dbURL: string) {
   // gets all images found by query
   const listAllByQuery = (query: Tags, callback: (images: Images) => void) => {
     imagesCollection.find({ tags: { $in: query } }).toArray((err, array) => {
-      if (err || !array) throw err;
+      if (err) throw err;
       callback(array as unknown as Images);
     });
   };
