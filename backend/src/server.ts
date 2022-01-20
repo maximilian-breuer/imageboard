@@ -27,14 +27,17 @@ app.use(serviceMiddleware());
 //   })
 // );
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '100mb'}));
+app.use(bodyParser.urlencoded({ extended: false, limit: '100mb'}));
 
 // deliver frontend
 app.use(
   "/",
   express.static(__dirname + "/../../angular-client/dist/imageboard/")
 );
+
+// deliver images
+app.use('/img', express.static('./images'));
 
 // api routes
 app.use("/api/v1/images", imagesRoute);
