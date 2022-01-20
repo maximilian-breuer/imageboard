@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 
 import { ImageCollectionService } from "../../services/imageCollection.service";
-import { Image } from "../../interfaces/image";
 
 @Component({
   selector: 'app-upload',
@@ -12,8 +10,9 @@ import { Image } from "../../interfaces/image";
 export class UploadComponent implements OnInit {
 
   file: string = "";
-  fileControl = new FormControl('');
-  tagControl = new FormControl('');
+  tags: string[] = [];
+  newTag: string = "";
+  filePath: string = "";
 
   constructor(private collectionService: ImageCollectionService) { }
 
@@ -30,13 +29,28 @@ export class UploadComponent implements OnInit {
   }
 
   upload() {
-    let tagInput: string = this.tagControl.value;
-    let tags: string[] = tagInput.split(" ");
+    if(this.filePath === ''|| this.tags.length < 1) return;
 
-    let newImage: Image = {_id: '', source: this.file, tags: tags, uploaded: new Date()};
+    this.collectionService.addImage(this.file, this.tags).subscribe();
+    this.filePath = "";
+    this.tags = [];
+    this.newTag = "";
+    this.file = "";
+  }
 
-    this.collectionService.addImage(newImage).subscribe(data => {
+  addTag(){
+    let toAdd: string = this.newTag.replace(/\s/g, "");
+    if(this.tags.indexOf(toAdd)!=-1||toAdd===""){
+      this.newTag = "";
+      return;
+    }
+    this.tags.push(toAdd);
+    this.tags.sort();
+    this.newTag = "";
+  }
 
-    });
+  removeTag(tag: string) {
+    let index: number = this.tags.indexOf(tag);
+    this.tags.splice(index,1);
   }
 }

@@ -16,6 +16,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
     "@types/node": "^16.11.17",
+    "@types/sharp": "^0.29.5",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
     "eslint": "^8.4.1",
@@ -32,6 +33,7 @@
     "express-unless": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "keygenerator": "^1.0.4",
-    "mongodb": "^4.2.2"
+    "mongodb": "^4.2.2",
+    "sharp": "^0.29.3"
   }
 }

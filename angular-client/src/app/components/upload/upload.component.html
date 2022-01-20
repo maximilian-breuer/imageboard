@@ -1,7 +1,7 @@
 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload</button>
 <div class="modal fade" id="uploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" (keyup.Enter)='upload()'>
       <div class="modal-header">
         <h5 class="modal-title" id="uploadModalLabel">Upload Image</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -11,16 +11,22 @@
           <img src="{{file}}" class="img-fluid img-thumbnail">
         </div>
         <div class="input-group mb-3">
-          <input [formControl]="fileControl" type="file" accept="image/*" class="form-control" (change)="fileChanged($event)">
+          <input type="file" accept="image/*" class="form-control" (change)="fileChanged($event)" [(ngModel)]="filePath">
         </div>
         <div class="input-group">
           <span class="input-group-text">Tags</span>
-          <textarea [formControl]="tagControl" class="form-control" aria-label="With textarea"></textarea>
+          <input type="text" class="form-control" [(ngModel)]="newTag" (keyup.Space)='addTag()'/>
+          <button class="btn btn-success" type="button" (click)='addTag()'>Add</button>
         </div>
+        <div class="input-group" style="padding-top: 10px" *ngFor="let tag of tags">
+          <input type="text" class="form-control" value="{{tag}}" disabled readonly>
+          <button class="btn btn-danger" type="button" (click)='removeTag(tag)' *ngIf='true'>Remove</button>
+        </div>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button (click)="upload()" type="button" class="btn btn-primary">Upload</button>
+        <button (click)="upload()" type="button" class="btn btn-primary" [disabled]="filePath === ''|| tags.length < 1">Upload</button>
       </div>
     </div>
   </div>

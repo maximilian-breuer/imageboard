@@ -11,18 +11,20 @@ export class ImageCollectionService {
 
   constructor (private http: HttpClient){}
 
-  addImage(image: Image): Observable<any> {
-    return <Observable<any>> this.http.post<any>(this.imagePath, image);
+  addImage(source: string, tags: string[]): Observable<any> {
+    return <Observable<any>> this.http.post<any>(this.imagePath, {source: source, tags: tags});
   }
 
-  getImages(tags: string[] = [], lastSeen: string = ""): Observable<Image[]> {
-    let options;
-    if(tags.length&&tags[0]!=""){
-      let tagsString = '["';
-      tagsString += tags.join('","');
-      tagsString += '"]'
-      options = {params: new HttpParams({fromString: 'tags=' + tagsString})};
+  getImages(startTime: number, limit: number, tags: string[]): Observable<Image[]> {
+    let options = {params: new HttpParams()};
+    options.params = options.params.append("startTime", startTime);
+    options.params = options.params.append("limit", limit);
+
+    if(tags.length && tags[0]!=""){
+      let tagString = '["' + tags.join('","') + '"]';
+      options.params = options.params.append("tags", tagString);
     }
+
     return <Observable<Image[]>> this.http.get(this.imagePath,options);
   }
 }
