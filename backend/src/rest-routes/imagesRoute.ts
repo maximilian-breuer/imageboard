@@ -120,7 +120,15 @@ router.post("/", (req: Request, res: Response) => {
 router.put("/:id", (req: Request, res: Response) => {
   try {
     const id = new ObjectId(req.params.id);
-    const tags = req.body.tags;
+
+    // preprocessing to generate a valid array with tags from array of strings
+    // eslint-disable-next-line prefer-const
+    let tags: Tags = [] as unknown as Tags;
+    for (let i = 0; i < req.body.tags.length; i++) {
+      // eslint-disable-next-line prefer-const
+      let tag = new Tag(req.body.tags[i]);
+      tags.push(tag);
+    }
 
     req.services.images.updateTags(id, tags, (id) => {
       res.setHeader("UpdatedImages", id);
