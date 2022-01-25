@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ImageCollectionService } from "../../services/imageCollection.service";
+import { Image } from "../../interfaces/image";
 
 @Component({
   selector: 'app-upload',
@@ -10,11 +10,11 @@ import { ImageCollectionService } from "../../services/imageCollection.service";
 export class UploadComponent implements OnInit {
 
   file: string = "";
-  tags: string[] = [];
-  newTag: string = "";
-  filePath: string = "";
 
   constructor(private collectionService: ImageCollectionService) { }
+  tags: string[] = [];
+  filePath: string = "";
+  @Output() onUpload: EventEmitter<Image> = new EventEmitter<Image>();
 
   ngOnInit(): void {
   }
@@ -23,7 +23,7 @@ export class UploadComponent implements OnInit {
     let file = e.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = (e) => {
+    reader.onload = () => {
       this.file = <string> reader.result;
     }
   }
@@ -31,26 +31,23 @@ export class UploadComponent implements OnInit {
   upload() {
     if(this.filePath === ''|| this.tags.length < 1) return;
 
-    this.collectionService.addImage(this.file, this.tags).subscribe();
+    let responseImage: Image = {_id: '', tags: Object.assign([],this.tags), uploaded: new Date()}
+    this.collectionService.addImage(this.file, this.tags).subscribe(res =>{
+      responseImage._id = res.Created;
+      this.onUpload.emit(responseImage);
+    });
     this.filePath = "";
     this.tags = [];
-    this.newTag = "";
     this.file = "";
   }
 
-  addTag(){
-    let toAdd: string = this.newTag.replace(/\s/g, "");
-    if(this.tags.indexOf(toAdd)!=-1||toAdd===""){
-      this.newTag = "";
-      return;
-    }
-    this.tags.push(toAdd);
-    this.tags.sort();
-    this.newTag = "";
+  tagListHandler(event: string[]) {
+    this.tags = event;
   }
 
-  removeTag(tag: string) {
-    let index: number = this.tags.indexOf(tag);
-    this.tags.splice(index,1);
+  close() {
+    this.file = "";
+    this.tags = [];
+    this.filePath = "";
   }
 }

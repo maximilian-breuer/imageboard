@@ -1,0 +1,17 @@
+Dockerfile
+docker-compose.yml
+
+.gitignore
+.git
+.angular
+
+node_modules
+
+backend/node_modules
+backend/build
+
+angular-client/node_modules
+angular-client/.angular
+angular-client/dist
+
+images

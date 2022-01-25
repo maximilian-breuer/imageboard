@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, Input} from '@angular/core';
 import { NgxMasonryOptions} from "ngx-masonry";
+import { Observable, Subject } from 'rxjs';
+import { repeat } from 'rxjs/operators';
 
 import { environment } from "../../../environments/environment";
 import { ImageCollectionService } from "../../services/imageCollection.service";
 import { Image } from "../../interfaces/image";
 
-const imageURL: string = "http://127.0.0.1:3000/api/v1/images";
 const initialImages: number = 20;
 const additionalImages: number = 10;
 
@@ -18,24 +18,29 @@ const additionalImages: number = 10;
 export class GalleryComponent implements OnInit {
   backendpath = environment.backendpath;
 
+  @Input() uploadEvent: Observable<Image> = new Observable<Image>();
+  @Input() loginEvent: Observable<boolean> = new Observable<boolean>();
+
   filter: string = "";
   lastFilter: string = "";
   images: Image[] = [];
 
-  modalImage: Image = {_id: '', tags: [], uploaded: new Date()};
-  modalRev: Image = {_id: '', tags: [], uploaded: new Date()};
-  newTag: string = "";
-  imageChanged: boolean = false;
+  loadImageViewEvent: Subject<Image> = new Subject<Image>();
 
   public masonryOptions: NgxMasonryOptions = {
     gutter: 0
   };
 
-  constructor(private collectionService: ImageCollectionService, private http: HttpClient) { }
+  constructor(private collectionService: ImageCollectionService) {
+
+  }
 
   ngOnInit(): void {
     this.collectionService.getImages(Date.now(), initialImages, []).subscribe(data =>{
       this.images = <Image[]> data;
+    });
+    this.uploadEvent.pipe(repeat()).subscribe((res) => {
+      this.images.unshift(res);
     });
   }
 
@@ -53,35 +58,11 @@ export class GalleryComponent implements OnInit {
     });
   }
 
-  setModalImage(image: Image){
-    this.modalRev = image;
-    this.modalImage = {_id: image._id, tags: Object.assign([],image.tags), uploaded: image.uploaded};
-    this.modalImage.tags.sort();
-    this.imageChanged = false;
+  setImageView(image: Image) {
+    this.loadImageViewEvent.next(image);
   }
 
-  removeTag(tag: string) {
-    let index: number = this.modalImage.tags.indexOf(tag);
-    this.modalImage.tags.splice(index,1);
-    this.imageChanged = true;
-  }
-
-  addTag() {
-    let toAdd: string = this.newTag.replace(/\s/g, "");
-    if(this.modalImage.tags.indexOf(toAdd)!=-1||toAdd===""){
-      this.newTag = "";
-      return;
-    }
-    this.modalImage.tags.push(toAdd);
-    this.modalImage.tags.sort();
-    this.newTag = "";
-    this.imageChanged = true;
-  }
-
-  updateTags() {
-    if(!this.imageChanged) return;
-    this.http.put(imageURL+"/"+this.modalImage._id,{tags: this.modalImage.tags}).subscribe();
-    this.modalRev.tags = Object.assign([],this.modalImage.tags)
-    this.imageChanged = false;
+  deleteImage(event: Image) {
+    this.images.splice(this.images.indexOf(event),1);
   }
 }

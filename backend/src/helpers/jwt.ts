@@ -10,7 +10,8 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   req.services.authorization.getSecretToken((secretToken) => {
     jwt.verify(token, secretToken, (err, user) => {
       if (err) return res.status(403).send("Unvalid token");
-      req.username = user?.username as unknown as string;
+      //error TS2339: Property 'username' does not exist on type 'string | JwtPayload'.
+      //req.username = user?.username as unknown as string;
       next();
     });
   });

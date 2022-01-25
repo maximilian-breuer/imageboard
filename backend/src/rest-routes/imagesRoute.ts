@@ -10,7 +10,7 @@ const router = express.Router();
 
 // searchs for a maximum of 'number' images of the most recent ones that are at least as old as 'startTime' (sorted w.r.t. upload date)
 // and include all tags of the passed tags array
-// get should include 'tags'=[tags], 'startTime'=startTime in ms and 'limit'=limit
+// get should include 'tags'=[string], 'startTime'=startTime in ms and 'limit'=limit
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   if (Object.keys(req.query).length === 2) {
     // no tags query is specified, proceed with the next matching route
@@ -20,7 +20,16 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 
   try {
     // reconstruct array from params string
-    const filterTags = JSON.parse(req.query.tags as string) as Tags;
+    const tagArray = JSON.parse(req.query.tags as string);
+
+    // preprocessing to generate a valid array with tags from array of strings
+    // eslint-disable-next-line prefer-const
+    let filterTags: Tags = [] as unknown as Tags;
+    for (let i = 0; i < tagArray.length; i++) {
+      // eslint-disable-next-line prefer-const
+      let tag = new Tag(tagArray[i]);
+      filterTags.push(tag);
+    }
 
     req.services.images.listAllByQuery(
       filterTags,
@@ -72,7 +81,6 @@ router.post("/", (req: Request, res: Response) => {
       // convert base64 string into two files (original and thumbnail) and store them
       const img_base64 = req.body.source.split(";base64,")[1];
       const imgBuffer = Buffer.from(img_base64, "base64");
-      let file_err = null;
 
       // prepare dir for images
       const imageDir = "./images";
@@ -88,7 +96,8 @@ router.post("/", (req: Request, res: Response) => {
         sharp(imgBuffer)
           .png({ quality: 25 })
           .toFile(filePath + "_small", (err, info) => {
-            if (err) file_err = err;
+            if (err) res.status(400).send("Bad Request: not a valid image");
+            else res.status(201).send({Created: id.toString()});
           });
       } else if (
         image_array[0].toLowerCase() == "data:image/jpg" ||
@@ -97,19 +106,14 @@ router.post("/", (req: Request, res: Response) => {
         sharp(imgBuffer)
           .jpeg({ quality: 25 })
           .toFile(filePath + "_small", (err, info) => {
-            if (err) file_err = err;
+            if (err) res.status(400).send("Bad Request: not a valid image");
+            else res.status(201).send({Created: id.toString()});
           });
       } else
         sharp(imgBuffer).toFile(filePath + "_small", (err, info) => {
-          if (err) file_err = err;
+          if (err) res.status(400).send("Bad Request: not a valid image");
+          else res.status(201).send({Created: id.toString()});
         });
-      // send response
-      if (file_err) {
-        res.status(400).send("Bad Request: not a valid image");
-      } else {
-        res.setHeader("ImageId", id.toString());
-        res.status(201).send("Created");
-      }
     } catch (err) {
       if (err) res.status(400).send("Bad Request: not a valid image");
     }
@@ -131,8 +135,7 @@ router.put("/:id", (req: Request, res: Response) => {
     }
 
     req.services.images.updateTags(id, tags, (id) => {
-      res.setHeader("UpdatedImages", id);
-      res.status(201).send("Updated");
+      res.status(201).send({UpdatedImages: id});
     });
   } catch (e) {
     res.status(400).send("Bad Request: not a valid image id");
@@ -162,8 +165,7 @@ router.delete("/:id", (req: Request, res: Response) => {
     if (file_err) {
       res.status(400).send("Bad Request: not a valid image id");
     } else {
-      res.setHeader("DeletedImage", id.toString());
-      res.status(200).send("Deleted");
+      res.status(200).send({DeletedImage: id.toString()});
     }
   } catch (e) {
     res.status(400).send("Bad Request: not a valid image id");

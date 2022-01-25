@@ -14,5 +14,12 @@
     "url": "git@git.rwth-aachen.de:learntech-lufgi9/webtech-21-22/gruppe-05.git"
   },
   "author": "group 5",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@angular-devkit/build-angular": "^13.1.3",
+    "@angular/cli": "^13.1.3",
+    "@angular/core": "^13.1.2",
+    "express": "^4.17.2",
+    "typescript": "^4.5.4"
+  }
 }

@@ -2,7 +2,8 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Imageboard.</a>
     <form class="d-flex">
-      <app-upload></app-upload>
+      <app-upload (onUpload)=handleUpload($event) *ngIf=loggedIn style="padding-right: 10px"></app-upload>
+      <app-login (onLogin)=handleLogin($event)></app-login>
     </form>
   </div>
 </nav>

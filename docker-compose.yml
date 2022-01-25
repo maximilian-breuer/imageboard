@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  mongo-db:
+    image: mongo
+    restart: unless-stopped
+
+  server:
+    build: .
+    depends_on: ["mongo-db"]
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    links:
+      - mongo-db
+    volumes:
+      - /app/images

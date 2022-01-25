@@ -10,22 +10,22 @@ const app = express();
 app.use(serviceMiddleware());
 
 // stop authenticate middleware from running on routes
-// app.use(
-//   authenticateToken.unless({
-//     path: [
-//       { url: new RegExp("/"), methods: ["GET"] },
-//       { url: new RegExp("images/?$"), methods: ["GET"] },
-//       {
-//         url: new RegExp("/api/v1/users/register"),
-//         methods: ["GET", "POST", "PUT"],
-//       },
-//       {
-//         url: new RegExp("/api/v1/users/login"),
-//         methods: ["GET", "POST", "PUT"],
-//       },
-//     ],
-//   })
-// );
+app.use(
+  authenticateToken.unless({
+    path: [
+      { url: new RegExp("/"), methods: ["GET"] },
+      { url: new RegExp("images/?$"), methods: ["GET"] },
+      {
+        url: new RegExp("/api/v1/users/register"),
+        methods: ["GET", "POST", "PUT"],
+      },
+      {
+        url: new RegExp("/api/v1/users/login"),
+        methods: ["GET", "POST", "PUT"],
+      },
+    ],
+  })
+);
 
 app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({ extended: false, limit: '100mb'}));
