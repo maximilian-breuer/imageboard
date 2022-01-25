@@ -4,8 +4,14 @@ Main folder of the Imageboard application.
 
 You need the Angular cli installed for executing the scripts.
 
-## Development server
+## Setup
 
+Run `npm install` in angular-client, backend and in the root folder of this project. (in sum 3 times)
+Read below for Mongodb setup and docker compose.
+
+## Start production server
+
+First you need to setup the project described in the `Setup` section of this readme.
 Run `npm run start` for prod build and start of backend server.
 
 ## Build
