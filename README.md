@@ -1,11 +1,13 @@
 # Imageboard
 
-Main folder of the Imageboard application.
+A modern full-stack web application for managing and sharing images developed by a team of 4 students. It features a responsive Angular single-page interface, an Express.js REST API, and MongoDB for data storage. The platform supports secure user authentication (JWT), image uploads with automatic thumbnail generation, and containerized deployment via Docker Compose — making it easy to demo, scale, or extend.
 
-You need the Angular cli installed for executing the scripts.
+![Imageboard](./docs/imageboard_show.png)
+
 
 ## Setup
 
+You need the Angular cli installed for executing the scripts.
 Run `npm install` in angular-client, backend and in the root folder of this project. (in sum 3 times)
 Read below for Mongodb setup and docker compose.
 
